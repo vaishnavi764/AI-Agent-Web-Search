@@ -1,0 +1,22 @@
+/* style.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Makes sure the content is vertically centered */
+    margin: 0; /* Remove default margin */
+    font-family: Arial, sans-serif; /* Optional: set a font style */
+    background-image: url('/static/images/ai.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px; /* Space between the title and the paragraph */
+}
+
+p {
+    text-align: center;
+    max-width: 600px; /* Optional: restrict the width of the paragraph for better readability */
+}

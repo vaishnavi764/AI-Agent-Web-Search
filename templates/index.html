@@ -3,41 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent Web Search</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        body {
-            padding: 50px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-    </style>
+    <title>AI Agent Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
     <div class="container">
-        <h2>AI Agent Web Search</h2>
-        <form action="/" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="file">Upload a CSV File:</label>
-                <input type="file" class="form-control" name="file" id="file" accept=".csv">
-            </div>
-
-            <div class="form-group">
-                <label for="gsheet_url">Or Enter Google Sheets URL:</label>
-                <input type="text" class="form-control" name="gsheet_url" id="gsheet_url" placeholder="Enter Google Sheets URL">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Upload or Fetch</button>
-        </form>
-
-        {% if data %}
-        <h3>Preview Data</h3>
-        <div class="table-responsive">
-            {{ data|safe }}
-        </div>
-        {% endif %}
+        <h1>Welcome to the AI Agent Dashboard</h1>
+        <nav>
+            <a href="{{ url_for('upload_file') }}">Upload Dataset</a>
+            <a href="{{ url_for('query') }}">Define Search Queries</a>
+            <a href="{{ url_for('results') }}">View Results</a>
+            <a href="{{ url_for('help') }}">Help</a>
+        </nav>
+        <section class="intro">
+            <h2>Get Started</h2>
+            <p>Upload your dataset, define search queries, and view the results all in one place. Let's get started by uploading your dataset!</p>
+        </section>
     </div>
 </body>
 </html>

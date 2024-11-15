@@ -1,92 +1,119 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for
 import os
 import pandas as pd
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-import base64
-import json
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-
-# Folder to store uploaded files
+app.secret_key = 'your_secret_key'  # Change this to something more secure
 UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Allowed file extensions for upload
 ALLOWED_EXTENSIONS = {'csv'}
 
-# Check if file is allowed
+# Ensure the upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Function to check allowed file extension
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Function to decode private key to check for correctness
-def check_private_key_format():
-    # Read the credentials.json file
-    with open('credentials.json', 'r') as f:
-        credentials = json.load(f)
-    
-    # Extract the private key
-    private_key = credentials.get("private_key")
-    
-    # Check if private key is present
-    if private_key:
-        # Remove the BEGIN/END markers and decode the base64
-        private_key_clean = private_key.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replace("\n", "")
-        
-        try:
-            decoded_key = base64.b64decode(private_key_clean)
-            print("Decoded private key: ", decoded_key)
-        except Exception as e:
-            print(f"Error decoding private key: {e}")
-    else:
-        print("Private key not found in credentials.")
-
-# Run the check for the private key
-check_private_key_format()
-
-# Route to upload CSV or connect Google Sheets
-@app.route('/', methods=['GET', 'POST'])
+# Home route to redirect to the upload page
+@app.route('/')
 def home():
+    return render_template('index.html')  # Render the index page
+
+# Route for uploading the CSV file
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
     if request.method == 'POST':
-        # Handle file upload
-        if 'file' in request.files:
-            file = request.files['file']
-            if file and allowed_file(file.filename):
-                filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-                file.save(filename)
-                return redirect(url_for('preview_file', filename=file.filename))
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            return "No file part"
+        
+        file = request.files['file']
+        
+        # If no file is selected
+        if file.filename == '':
+            return "No selected file"
+        
+        # If the file is valid
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            
+            # Save the file path in the session
+            session['temp_file_path'] = file_path
+            
+            return redirect(url_for('query'))  # Redirect to the query page after uploading
+            
+    return render_template('upload.html')  # Render the upload page to select a CSV file
 
-        # Handle Google Sheets URL
-        if 'gsheet_url' in request.form:
-            gsheet_url = request.form['gsheet_url']
-            data = fetch_google_sheet(gsheet_url)
-            return render_template('index.html', data=data)
-
-    return render_template('index.html', data=None)
-
-# Route to display uploaded CSV file data
-@app.route('/preview/<filename>', methods=['GET'])
-def preview_file(filename):
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    data = pd.read_csv(filepath)
-    return render_template('index.html', data=data.to_html(classes='table table-striped'))
-
-# Fetch data from Google Sheets
-def fetch_google_sheet(gsheet_url):
-    # Scope for accessing Google Sheets API
-    scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+# Route to define search queries and extract column data
+@app.route('/query', methods=['GET', 'POST'])
+def query():
+    error = None  # To store error message if column is not found
+    if request.method == 'POST':
+        # Strip any whitespace around the selected column and convert to lowercase
+        column = request.form['column'].strip().lower()
+        print(f"Selected Column: '{column}'")  # Debugging line
+        
+        if 'temp_file_path' in session:
+            temp_file_path = session['temp_file_path']
+            
+            try:
+                df = pd.read_csv(temp_file_path)
+                
+                # Normalize column names by stripping whitespace and converting to lowercase
+                df.columns = df.columns.str.strip().str.lower()
+                
+                print("CSV Data Loaded Successfully")
+                print(f"Columns in CSV (after normalization): {df.columns.tolist()}")  # Debugging line
+                
+            except FileNotFoundError:
+                return "Temporary CSV file not found. Please upload the file again."
+            
+            # Check if the column exists in the dataframe
+            if column in df.columns:
+                column_data = df[column].dropna().astype(str).tolist()  # Extract and convert column data to string
+                print(f"Extracted Column Data: {column_data}")  # Debugging line
+                
+                # Store the extracted column data in session to pass to results page
+                session['extracted_data'] = [{'Value': value} for value in column_data]
+                
+                # Redirect to the results page after extracting the data
+                return redirect(url_for('results'))
+            else:
+                error = f"Column '{column}' not found in the CSV."
+            
+    # If GET request, show the form with normalized columns
+    if 'temp_file_path' in session:
+        temp_file_path = session['temp_file_path']
+        df = pd.read_csv(temp_file_path)
+        df.columns = df.columns.str.strip().str.lower()  # Normalize column names
+        columns = df.columns.tolist()  # Get normalized column names
+        return render_template('query.html', columns=columns, error=error)  # Pass columns and error to the form
     
-    # Loading credentials from 'credentials.json'
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
-    client = gspread.authorize(creds)
-    
-    # Get the sheet by URL
-    sheet = client.open_by_url(gsheet_url)
-    worksheet = sheet.get_worksheet(0)
-    data = worksheet.get_all_records()
-    
-    # Convert to pandas DataFrame and return
-    return pd.DataFrame(data)
+    return redirect(url_for('upload_file'))  # Redirect to upload if no file is uploaded
 
+# Route to display results (extracted column data)
+@app.route('/results')
+def results():
+    # Retrieve the extracted data from the session
+    extracted_data = session.get('extracted_data', [])
+    print(f"Extracted Data from Session: {extracted_data}")  # Debugging line
+
+    if extracted_data:
+        return render_template('results.html', results=extracted_data)
+    else:
+        return "No results available. Please upload a CSV and query."
+
+# Route for the help page
+@app.route('/help')
+def help():
+    return render_template('help.html')  # Render a simple help page
+
+# Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)

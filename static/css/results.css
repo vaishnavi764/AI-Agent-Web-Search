@@ -1,0 +1,56 @@
+/* Reset some default styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('/static/images/ai.jpg');
+    background-size: cover;
+    background-position: center;
+
+    /* color: #333;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; */
+}
+
+/* Heading styling */
+/* h2 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Table styling */
+/* table {
+    width: 80%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #4d4de3;
+    color: #fff;
+}
+
+table td {
+    background-color: #f9f9f9;
+}
+
+/* Add some hover effect to the table rows */
+/* table tr:hover {
+    background-color: #f1f1f1;
+} */ 

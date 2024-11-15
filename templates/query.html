@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Column for Query</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/query.css') }}">
+</head>
+<body>
+    <h1>Select Column for Query</h1>
+    <form action="{{ url_for('query') }}" method="post">
+        <label for="column">Select Column:</label>
+        <select name="column" id="column">
+            {% for column in columns %}
+                <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Submit Query</button>
+    </form>
+</body>
+</html>

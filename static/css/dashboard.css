@@ -1,0 +1,75 @@
+/* Body styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('/static/images/art.jpg'); /* Use direct static path in CSS */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh; /* Full height */
+}
+
+/* Container styling */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 70px;
+    /* background-color: rgba(19, 65, 86, 0.9); Slightly more opaque */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 50px; /* Adds space at the top */
+}
+
+/* Heading style */
+h1 {
+    text-align: center;
+    color: #050d14; /* Darker, more professional heading color */
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* Navigation bar styles */
+nav {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    padding: 10px 0;
+    background-color: rgba(99, 137, 139, 0.7); /* Slightly transparent for navigation */
+    border-radius: 15px;
+    
+}
+
+nav a {
+    color: #2C3E50;
+    text-decoration: none;
+    padding: 12px 25px;
+    background-color: #76b7c4; /* Soft background for links */
+    border-radius: 25px;
+    transition: background-color 0.3s, transform 0.2s ease;
+}
+
+nav a:hover {
+    background-color: #6ad0e7; /* Slightly darker on hover */
+    transform: scale(1.05); /* Scale effect on hover */
+}
+
+/* Intro section styling */
+.intro {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.intro h2 {
+    color: #080a0b; /* Darker text color */
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+.intro p {
+    font-size: 1.2em;
+    color: #121b1c; /* Light gray text */
+    max-width: 800px;
+    margin: 0 auto;
+}

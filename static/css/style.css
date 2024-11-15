@@ -1,67 +1,82 @@
-/* Reset some basic styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Set up a basic layout */
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    background: url('background.jpg') no-repeat center center fixed;
+    background-size: cover;
     color: #333;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: white;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+    max-width: 800px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+/* Navigation Styles */
+nav {
+    background: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
 }
 
+nav a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Form Styles */
 form {
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
-label {
-    font-size: 1rem;
-    margin-right: 10px;
-}
-
-input[type="file"], input[type="text"] {
-    padding: 8px;
-    margin-bottom: 10px;
-    width: 300px;
+input[type="file"],
+input[type="text"],
+button {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    margin: 10px 0;
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
+    background: #333;
+    color: #fff;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #45a049;
+    background: #555;
 }
 
+/* Header Styles */
+h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Table Styles */
 table {
-    width: 100%;
-    margin-top: 20px;
     border-collapse: collapse;
+    margin: 20px 0;
+    width: 100%;
 }
 
 table, th, td {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
 th, td {
@@ -70,5 +85,5 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
+    background: #f4f4f4;
 }
